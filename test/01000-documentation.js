@@ -7,7 +7,6 @@
 
 
     new TestableDocs()
-        .docs(__dirname, '../docs')
-        .source(__dirname, '../src')
+        .setSourcePath(__dirname, '../src')
         .executeTest(describe, it);
 })();
