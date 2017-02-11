@@ -1,0 +1,29 @@
+{
+  "name": "testable-docs",
+  "version": "1.0.0",
+  "description": "Parses your code, checks if your docs are complete, exports them as structured data",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --reporter spec test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/distributed-systems/testable-docs.git"
+  },
+  "keywords": [
+    "docs",
+    "testable"
+  ],
+  "author": "Michael van der Weg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/distributed-systems/testable-docs/issues"
+  },
+  "homepage": "https://github.com/distributed-systems/testable-docs#readme",
+  "dependencies": {
+    "acorn": "^4.0.11",
+    "comment-parser": "^0.4.0",
+    "ee-log": "^1.0.2",
+    "mocha": "^3.2.0"
+  }
+}
