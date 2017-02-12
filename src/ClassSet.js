@@ -14,6 +14,42 @@
 
 
 
+
+        /**
+        * set the root path on items added to the set
+        *
+        * @param {*} item item that is added to the set
+        */
+        add(item) {
+            if (item) item.setRootPath(this.rootPath);
+
+            // delegate to super
+            return super.add(item);
+        }
+
+
+
+
+
+
+
+
+        /**
+        * sets the path this the classes should treated 
+        * relatively to
+        *
+        * @param {string} rootPath path
+        */
+        setRootPath(rootPath) {
+            this.rootPath = rootPath;
+        }
+
+
+
+
+
+
+
         /**
         * checks if a given class exists
         *

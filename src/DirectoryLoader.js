@@ -6,36 +6,32 @@
     const path = require('path');
     const fs = require('fs');
     const log = require('ee-log');
-    const SourceCodeAnalyzer = require('./SourceCodeAnalyzer');
-    const ClassSet = require('./ClassSet');
+
+
 
 
 
 
     /**
-    * analalyzes the sourcefiles of a directory
+    * loads all file of a directory
     *
     * @private
     */
-    module.exports = class SourceDirectoryAnalyzer {
+    module.exports = class DirectoryLoader {
 
 
 
 
 
         /**
-        * recursively scans source files & analyzes them  so that
-        * they can be tested later on
+        * recursively loads sourcefiles from a directory
         *
         * @param {string} directory the directory to scan for source files in
-        * @param {map} files a map that contains all the analyzed data
+        * @param {map=} files a map that contains all the files
         *
-        * @returns {promise} files whe fulfilled, a map containing all data 
-        *                    found in the sourcefiles
+        * @returns {promise} files when fulfiled, a map containing all file contents
         */
-        analyzeDirectory(directory, files = new ClassSet()) {
-
-
+        loadFiles(directory, files = new Map()) {
             return new Promise((resolve, reject) => {
 
 
@@ -50,18 +46,11 @@
                             if (path.extname(file) === '.js') {
 
 
-                                // analyze
-                                return this.loadSourceFile(filePath).then((classDefinitions) => {
+                                // load
+                                return this.loadSourceFile(filePath).then((sourceCode) => {
 
-                                    // prepare for returning
-                                    classDefinitions.forEach((definition) => {
-
-                                        // add filepath
-                                        definition.setFile(filePath);
-
-                                        // add to global set
-                                        files.add(definition);
-                                    });
+                                    // store
+                                    files.set(filePath, sourceCode);
 
                                     // done
                                     return Promise.resolve();
@@ -78,7 +67,7 @@
 
 
                                             // do directories recirsively
-                                            if (stats.isDirectory()) this.loadSourceFiles(filePath).then(statResolve).catch(statReject);
+                                            if (stats.isDirectory()) this.loadFiles(filePath).then(statResolve).catch(statReject);
                                             else statResolve();
                                         }
                                     });
@@ -103,7 +92,7 @@
         * @param {string} filePath path to the source file to load and
         *                 analyze
         *
-        * @returns {promise} classes when fulfilled, the data found in the sourfile
+        * @returns {promise} sourceCode when fulfilled, the sourceCode found in the file
         */
         loadSourceFile(filePath) {
 
@@ -114,14 +103,7 @@
                 // read file
                 fs.readFile(filePath, (err, data) => {
                     if (err) reject(err);
-                    else {
-
-                        // parse
-                        const classes = new SourceCodeAnalyzer().parse(data.toString());
-
-                        // check, done :)
-                        resolve(classes);
-                    }
+                    else resolve(data.toString());
                 });
             });
         }

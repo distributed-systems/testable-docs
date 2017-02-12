@@ -6,7 +6,9 @@
     const fs = require('fs');
     const log = require('ee-log');
     const assert = require('assert');
-    const SourceDirectoryAnalyzerSync = require('./SourceDirectoryAnalyzerSync');
+    const DirectoryLoaderSync = require('./DirectoryLoaderSync');
+    const ClassAnalyzer = require('./ClassAnalyzer');
+    const Parser = require('./Parser');
 
 
 
@@ -15,14 +17,14 @@
 
 
     /**
-    * tests all ecma scripts found in a given firectory.
+    * tests all ecma scripts found in a given directory.
     * loads the source files, extracts classes, their methods, 
     * their paramters and accompanying source commets.
     * 
     * runs mocha tests for all the extracted objects and
     * tests that everything is commented corretly. 
     */
-    module.exports = class TestableDocs extends SourceDirectoryAnalyzerSync {
+    module.exports = class TestableDocs {
 
 
 
@@ -57,33 +59,47 @@
         */
         executeTest(describe, it) {
 
+            // prepare the parser ans analyzer
+            const parser = new Parser();
+            const classAnalyzer = new ClassAnalyzer();
 
-            // laod the source files
-            const files = this.analyzeDirectory(this.source);
+
+            // laod files froom the directory
+            const files = new DirectoryLoaderSync().loadFiles(this.source);
 
 
             describe('Documentation', () => {
-                for (const classDefinition of files.values()) {
 
-                    describe (`${classDefinition.private ? 'Private' : 'Public'} Class ${classDefinition.name} (${classDefinition.getRelativePath(this.source)})`, () => {
-                        it(`Class comment`, () => {
-                            assert.equal(classDefinition.hasComment, true, `Missing comments for class!`);
-                            assert.equal(!!classDefinition.description, true, `Missing description for class!`);
-                        });
+                // parse & analyze
+                for (const item of files) {
+                    const filePath = item[0];
+                    const sourceCode = item[1];
+
+                    const ast = parser.parse(sourceCode);
+                    const classes = classAnalyzer.analyze(ast, this.source, filePath);
 
 
-                        for (const method of classDefinition.methods) {
-                            it(`${method.private ? 'Private' : 'Public'} Method ${method.name}`, () => {
-                                assert.equal(method.hasComment, true, `Missing comments for method!`);
-                                assert.equal(!!method.description, true, `Missing description for method!`);
-
-                                for (const parameter of method.parameters) {
-                                    assert.equal(parameter.hasComment, true, `Missing comment for the parameter ${parameter.name}!`);
-                                    assert.equal(!!parameter.description, true, `Missing description for the parameter ${parameter.name}!`);
-                                }
+                    for (const classDefinition of classes) {
+                        describe (`${classDefinition.private ? 'Private' : 'Public'} Class ${classDefinition.name} (${classDefinition.getRelativePath()})`, () => {
+                            it(`Class comment`, () => {
+                                assert.equal(classDefinition.hasComment, true, `Missing comments for class!`);
+                                assert.equal(!!classDefinition.description, true, `Missing description for class!`);
                             });
-                        }
-                    });
+
+
+                            for (const method of classDefinition.methods) {
+                                it(`${method.private ? 'Private' : 'Public'} Method ${method.name}`, () => {
+                                    assert.equal(method.hasComment, true, `Missing comments for method!`);
+                                    assert.equal(!!method.description, true, `Missing description for method!`);
+
+                                    for (const parameter of method.parameters) {
+                                        assert.equal(parameter.hasComment, true, `Missing comment for the parameter ${parameter.name}!`);
+                                        assert.equal(!!parameter.description, true, `Missing description for the parameter ${parameter.name}!`);
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             });
         }

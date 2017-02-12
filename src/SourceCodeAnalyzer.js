@@ -6,8 +6,8 @@
 
     const acorn = require('acorn');
     const log = require('ee-log');
-    const commentParser = require('comment-parser');
-    const ClassDefinition = require('./ClassDefinition');
+    const ClassDocumentation = require('./ClassDocumentation');
+    const doctrine = require('doctrine');
 
 
 
@@ -52,18 +52,14 @@
             // get parsed lock comments
             comments = comments.filter(comment => comment.type === 'Block');
 
-            // parse
+
+            // parse all commanets
             comments.forEach((comment) => {
 
-                // the comment parser is very strict on spacing, make sure 
-                // the input is working for it
-                const text = `/** \n ${comment.value} \n*/`.replace(/\n\s*\*/gi, '\n *');
-
-                // parse
-                comment.body = commentParser(text);
-
-                // assumptions, so many assumptions
-                if (comment.body && comment.body.length) comment.body = comment.body[0];
+                // let doctrine do the work
+                comment.body = doctrine.parse(comment.value, {
+                    unwrap: true
+                });
             });
 
 
@@ -79,7 +75,7 @@
             // parse each class
             if (classAsts && classAsts.length) {
                 classAsts.forEach((classAst) => {
-                    const definition = new ClassDefinition();
+                    const definition = new ClassDocumentation();
 
                     definition.line = classAst.loc.start.line;
                     definition.column = classAst.loc.start.column;

@@ -9,7 +9,7 @@
     * data that can be used to atomatically create documentation.
     * returns descirptions as mardown formatted text.
     */
-    module.exports = class StructuredMarkdownDocument {
+    module.exports = class StructuredDocumentationDocument {
 
 
 
@@ -35,6 +35,12 @@
         getDocumentation() {
 
         }
+
+
+
+
+
+
 
 
 

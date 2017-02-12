@@ -7,6 +7,7 @@
     const fs = require('fs');
     const log = require('ee-log');
     const SourceCodeAnalyzer = require('./SourceCodeAnalyzer');
+    const Parser = require('./Parser');
     const ClassSet = require('./ClassSet');
 
 
@@ -25,15 +26,15 @@
 
 
         /**
-        * recursively scans source files & analyzes them  so that
-        * they can be tested later on
+        * recursively loads sourcefiles from a directory
         *
         * @param {string} directory the directory to scan for source files in
-        * @param {map} files a map that contains all the analyzed data
+        * @param {map=} files a map that contains all the files
         *
-        * @returns {map} files a map containing all data found in the sourcefiles
+        * @returns {map} files a map containing all file contents
         */
-        analyzeDirectory(directory, files = new ClassSet()) {
+        loadFiles(directory, files = new Map()) {
+
 
             // check, load and analyze all js files
             fs.readdirSync(directory).forEach((file) => {
@@ -43,19 +44,8 @@
                 if (path.extname(file) === '.js') {
 
 
-                    // analyze
-                    const classDefinitions = this.loadSourceFile(filePath);
-
-
-                    // prepare for returning
-                    classDefinitions.forEach((definition) => {
-
-                        // add filepath
-                        definition.setFile(filePath);
-
-                        // add to global set
-                        files.add(definition);
-                    });
+                    // load
+                    files.set(filePath, this.loadSourceFile(filePath));
                 } else {
 
 
@@ -63,7 +53,7 @@
                     const stats = fs.statSync(filePath);
 
                     // do directories recirsively
-                    if (stats.isDirectory()) this.loadSourceFiles(filePath);
+                    if (stats.isDirectory()) this.loadFiles(filePath);
                 }
             });
 
@@ -83,15 +73,12 @@
         * @param {string} filePath path to the source file to load and
         *                 analyze
         *
-        * @returns {array} classes the data found in the sourfile
+        * @returns {string} sourceCode the sourceCode of the file
         */
         loadSourceFile(filePath) {
 
             // read file
-            const data = fs.readFileSync(filePath);
-               
-            // parse
-            return new SourceCodeAnalyzer().parse(data.toString());
+            return fs.readFileSync(filePath).toString();
         }
     }
 })();
