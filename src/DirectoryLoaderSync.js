@@ -14,12 +14,12 @@
 
 
     /**
-    * analalyzes the sourcefiles of a directory in a blocking
+    * analyzes the source files of a directory in a blocking
     * synchronous way
     *
     * @private
     */
-    module.exports = class SourceDirectoryAnalyzerSync {
+    module.exports = class DirectoryLoaderSync {
 
 
 

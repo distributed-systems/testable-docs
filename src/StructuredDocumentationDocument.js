@@ -47,7 +47,7 @@
 
 
         /**
-        * set the sourcecode path. if not set the source will
+        * set the source code path. if not set the source will
         * not be analyzed
         *
         * @param {string} parts rest parameters for path parts that 
@@ -67,7 +67,7 @@
 
 
         /**
-        * collects all requried information for the document
+        * collects all required information for the document
         */
         collectParts() {
 

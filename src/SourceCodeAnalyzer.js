@@ -14,8 +14,8 @@
 
 
     /**
-    * analyzes sourcecode passed to it, extracts
-    * classes, their methods, their paramters and
+    * analyzes source code passed to it, extracts
+    * classes, their methods, their parameters and
     * all block comments for those objects
     *
     * exported as `SourceCodeAnalyzer` of this module:
@@ -227,7 +227,7 @@
 
 
         /**
-        * finds a require statment identified by 
+        * finds a require statement identified by 
         * a certain name of the variable or constant
         * it is assigned to. this will later be used
         * to resolve super class documentation
@@ -275,7 +275,7 @@
 
 
         /**
-        * remove linebreaks, except for double ones,
+        * remove line breaks, except for double ones,
         * remove whitespace
         *
         * @private

@@ -14,7 +14,7 @@
 
 
         /**
-        * make sure all calsses implement this class correctly
+        * make sure all classes implement this class correctly
         */
         toJSON() {
             throw new Error(`The toJSON method must implemented by the implementing class!`);
