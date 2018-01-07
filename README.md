@@ -1,6 +1,5 @@
+# Testable Docs
 
+Tests your class comments for completeness
 
-
- 
-
-    new TestableDocs().source().docs().getDocs()
+see tests folder for how to use the library
